@@ -5,11 +5,18 @@ require 'JSON'
 require 'sinatra/base'
 require_relative './application_controller.rb'
 require_relative './backend/ServerManager.rb'
+require_relative './backend/EncryptionHelper.rb'
 
 
 def run(opts)
+  eh=EncryptionHelper.new
+  key=eh.getKey
+  puts key
+
   serverManager=ServerManager.new
-  serverManager.createChatroom("Testing", "")
+  serverManager.createChatroom("Testing", "", eh)
+
+
   EM.run do
 
     web_app=opts[:app]
@@ -31,12 +38,13 @@ def run(opts)
       EM::WebSocket.run(:host=>"0.0.0.0", :port=>8000) do |ws|
 
         ws.onopen do
-          ws.send(JSON.generate({"type"=>"serverJoined"}))
+          ws.send(JSON.generate({"type"=>"serverJoined", "key"=>[key[0].to_s, key[2].to_s]}))
         end
 
         ws.onclose do
-          serverManager.userLogOff(ws)
-          EventMachine.stop
+          #serverManager.userLogOff(ws)
+          #serverManager.saveUsers
+          #EventMachine.stop
         end
 
         ws.onmessage do |packet|
@@ -44,14 +52,30 @@ def run(opts)
           if data["type"]=="chatroomMessage"
             serverManager.sendToChatroom(ws, packet)
           elsif data["type"]=="chatroomJoin"
+            data=JSON.parse(eh.decryptData(data["data"], [key[1], key[2]]))
             serverManager.addUserToChatroom(ws, data["name"], data["password"])
           elsif data["type"]=="createChatroom"
-            serverManager.createChatroom(data["name"], data["password"])
-          elsif data["type"]=="assignName"
-            serverManager.addUser(ws, data["user"])
-
+            data=JSON.parse(eh.decryptData(data["data"], [key[1], key[2]]))
+            serverManager.createChatroom(data["name"], data["password"], eh)
           elsif data["type"]=="chatroomLeave"
             serverManager.leaveChatroom(ws)
+          elsif data["type"]=="loginRequest"
+            data=JSON.parse(eh.decryptData(data["data"], [key[1], key[2]]))
+
+            if serverManager.validLogin(data["username"], data["password"])
+              serverManager.addUser(ws, data["username"], data["key"])
+              ws.send(JSON.generate({"type"=>"loginAccept"}))
+            else
+              ws.send(JSON.generate({"type"=>"loginRefuse", "message"=>"Invalid Username or Password"}))
+            end
+          elsif data["type"]=="registerUser"
+            data=JSON.parse(eh.decryptData(data["data"], [key[1], key[2]]))
+            if serverManager.userExists(data["username"])
+               ws.send(JSON.generate({"type"=>"registerFailed", "message"=>"Username already exists"}))
+            else
+              serverManager.registerUser(data["username"], data["password"])
+              ws.send(JSON.generate({"type"=>"loginAccept"}))
+            end 
           else
             puts "UNRECOGNIZED TYPE: #{data["type"]}"
           end

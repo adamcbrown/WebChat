@@ -4,6 +4,7 @@ require 'json'
 require 'pry'
 require 'thin'
 require 'sinatra/base'
+require_relative "backend/EncryptionHelper.rb"
 
 class ApplicationController < Sinatra::Base
 
@@ -12,7 +13,16 @@ class ApplicationController < Sinatra::Base
   end
 
   get '/' do
+    @eh=EncryptionHelper.new
     erb :'index'
+  end
+
+  get '/chatroom' do
+    erb :'chatroom'
+  end
+
+  get '/register' do
+    erb :'register'
   end
 
 end

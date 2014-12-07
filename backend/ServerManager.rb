@@ -1,49 +1,67 @@
 require_relative "./Chatroom.rb"
+require_relative "./User.rb"
 
 class ServerManager
-  CHATROOMS=[]
-  USERS={}
 
-  def createChatroom(name, password)
-    CHATROOMS<<Chatroom.new(name, password)
+  def initialize
+    @chatrooms=[]
+    @users=[]
+
+    @registeredUsers={}
   end
 
-  def addUser(ws, name)
-    USERS[ws]=name
+  def createChatroom(name, password, eh)
+    @chatrooms<<Chatroom.new(name, password, eh)
+  end
+
+  def addUser(ws, name, key)
+    @users<<User.new(ws, name, key)
   end
 
   def addUserToChatroom(ws, roomName, password)
     chatroom=findChatroomWithName(roomName)
+    user=getUserFromWS(ws)
     if chatroom!=nil
-      chatroom.addUser(ws, USERS[ws], password)
+      chatroom.addUser(user, password)
     else
       ws.send(JSON.generate({"type"=>"chatroomRefuse", "message"=>"Chatroom does not exist"}))
     end
   end
 
   def userLogOff(ws)
+    user=getUserFromWS(ws)
     leaveChatroom(ws)
-    USERS.delete(ws)
+    @users.delete(user)
   end
 
   def leaveChatroom(ws)
-    chatroom=findChatroomWithUser(ws)
+    user=getUserFromWS(ws)
+    chatroom=findChatroomWithUser(user)
     if chatroom!=nil
-      chatroom.removeUser(ws)
+      chatroom.removeUser(user)
     end
   end
 
-  def sendToChatroom(ws, packet)
-    chatroom=findChatroomWithUser(ws)
+  def sendToChatroom(user, packet)
+    chatroom=findChatroomWithUser(user)
     if chatroom!=nil
       chatroom.sendToAll(packet)
     end
   end
 
-  def findChatroomWithUser(ws)
-    CHATROOMS.each do |chatroom|
-      chatroom.users.each_key do |user|
-        if user==ws
+  def getUserFromWS(ws)
+    @users.each do |user|
+      if user.ws==ws
+        return user
+      end
+    end
+    return nil
+  end
+
+  def findChatroomWithUser(user)
+    @chatrooms.each do |chatroom|
+      chatroom.users.each_key do |user0|
+        if user0==user.ws
           return chatroom
         end
       end
@@ -52,11 +70,27 @@ class ServerManager
   end
 
   def findChatroomWithName(name)
-    CHATROOMS.each do |chatroom|
+    @chatrooms.each do |chatroom|
       if chatroom.name==name
         return chatroom
       end
     end
     return nil
+  end
+
+  def registerUser(username, password)
+    @registeredUsers[username]=password
+  end
+
+  def userExists(username)
+    @registeredUsers.has_key?(username)
+  end
+
+  def validLogin(username, password)
+    return userExists(username) && @registeredUsers[username]==password
+  end
+
+  def saveUsers
+    
   end
 end
