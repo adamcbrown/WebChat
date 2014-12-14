@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  var socket = new WebSocket("ws://localhost:8000");
+  var socket = new WebSocket("ws://"+window.document.location.host+":8000");
   var decryptionKey = [$.cookie("key_d"), $.cookie("key_n")];
   var chatEncryptionKey;
   var serverEncryptKey;

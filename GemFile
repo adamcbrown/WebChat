@@ -6,3 +6,4 @@ gem 'sinatra', '~> 1.4.5'
 gem 'thin', '~> 1.6.3'
 gem 'json'
 gem 'pry'
+gem "puma"
