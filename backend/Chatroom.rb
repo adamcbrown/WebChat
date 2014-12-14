@@ -10,7 +10,6 @@ class Chatroom
   end
 
   def addUser(user, password)
-    puts @key
     if !@users.include?(user)
       if password!=@password
         user.ws.send(JSON.generate({"type"=>"chatroomRefuse", "message"=>"Invalid Password"}))
@@ -18,8 +17,6 @@ class Chatroom
         @users<<user
         user.ws.send(JSON.generate({"type"=>"chatroomAccept", "key"=>[@key[0].to_s, @key[2].to_s]}))
       end
-    else
-      puts "Already Here"
     end
   end
 

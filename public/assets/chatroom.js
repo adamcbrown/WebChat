@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  var socket = new WebSocket("ws://"+window.document.location.host+":8000");
+  var socket = new WebSocket("ws://"+window.document.location.host+"/");
   var decryptionKey = [$.cookie("key_d"), $.cookie("key_n")];
   var chatEncryptionKey;
   var serverEncryptKey;
@@ -63,7 +63,6 @@ $(document).ready(function(){
   }
 
   socket.onmessage=function(event){
-    console.log(event.data)
     var data=JSON.parse(event.data);
     switch(data.type){
       case "serverJoined":
@@ -85,7 +84,6 @@ $(document).ready(function(){
         $(".lobbyEnabled").prop("disabled", true);
         $(".chatEnabled").prop("disabled", false);
         chatEncryptionKey=data.key;
-        console.log(chatEncryptionKey);
         $("#chatbox").html("");
         break;
       case "loginCheckFailed":
@@ -96,7 +94,6 @@ $(document).ready(function(){
         break;
       case "chatroomList":
         var chatrooms=JSON.parse(decryptText(data.chatrooms, decryptionKey)).chatrooms;
-        console.log(chatrooms);
         $("#chatbox").html("");
         for(var i=0;i<chatrooms.length;i++){
           $("#chatbox").append(chatrooms[i]+"<br>");

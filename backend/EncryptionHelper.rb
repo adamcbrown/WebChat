@@ -85,7 +85,6 @@ class EncryptionHelper
     data.each do |num|
       str+=num.to_i.chr
     end
-    puts str
     return str
   end
 

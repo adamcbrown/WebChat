@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-  var socket = new WebSocket("ws://"+window.document.location.host+":8000");
+  var socket = new WebSocket("ws://"+window.document.location.host+"/");
   var serverEncryptKey;
 
   $("#register").click(function(event){
@@ -19,7 +19,6 @@ $(document).ready(function(){
     switch(data.type){
       case "serverJoined":
         serverEncryptKey=data.key;
-        console.log(serverEncryptKey);
         break;
       case "loginAccept":
         alert("User is now registered!")
