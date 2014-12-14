@@ -56,7 +56,7 @@ $(document).ready(function(){
 
   window.onbeforeunload = function(){
     var data=encryptText(JSON.stringify({"username":username}), serverEncryptKey);
-    socket.send(JSON.stringify({"type":"logOff",
+    socket.send(JSON.stringify({"type":"userLogOff",
                               "data":data}));
     $.cookie("username", null);
     $.cookie("password", null);

@@ -41,9 +41,7 @@ def run(opts)
         end
 
         ws.onclose do
-          #serverManager.userLogOff(ws)
-          #serverManager.saveUsers
-          #EventMachine.stop
+          
         end
 
         ws.onmessage do |packet|
@@ -84,7 +82,7 @@ def run(opts)
             else
               ws.send(JSON.generate("type"=>"loginCheckFailed"))
             end
-          elsif data["type"]=="logOff"
+          elsif data["type"]=="userLogOff"
             data=JSON.parse(eh.decryptData(data["data"], [key[1], key[2]]))
             serverManager.userLogOff(data["username"])
           elsif data["type"]=="requestChatroom"
