@@ -12,23 +12,23 @@ require_relative './backend/EncryptionHelper.rb'
 class Server
     KEEPALIVE_TIME = 15 # in seconds
     CHANNEL        = "chat-demo"
-def initialize(app)
-      @eh=EncryptionHelper.new
-      @serverManager=ServerManager.new
-      @key=@eh.getKey
-      @app     = app
-      # @clients = []
-      uri = URI.parse(ENV["REDISCLOUD_URL"])
-      @redis = Redis.new(host: uri.host, port: uri.port, password: uri.password)
-      # Thread.new do
-      #   redis_sub = Redis.new(host: uri.host, port: uri.port, password: uri.password)
-      #   redis_sub.subscribe(CHANNEL) do |on|
-      #     on.message do |channel, msg|
-      #       @clients.each {|ws| ws.send(msg) }
-      #     end
-      #   end
-      # end
-    end
+  def initialize(app)
+    @eh=EncryptionHelper.new
+    @serverManager=ServerManager.new
+    @key=@eh.getKey
+    @app     = app
+    # @clients = []
+    uri = URI.parse(ENV["REDISCLOUD_URL"])
+    @redis = Redis.new(host: uri.host, port: uri.port, password: uri.password)
+    # Thread.new do
+    #   redis_sub = Redis.new(host: uri.host, port: uri.port, password: uri.password)
+    #   redis_sub.subscribe(CHANNEL) do |on|
+    #     on.message do |channel, msg|
+    #       @clients.each {|ws| ws.send(msg) }
+    #     end
+    #   end
+    # end
+  end
 
   def call(env)
     if Faye::WebSocket.websocket?(env)
