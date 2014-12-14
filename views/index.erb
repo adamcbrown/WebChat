@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="./assets/jquery.cookie.js"></script>
+    <script src="./assets/biginteger.js"></script>
+    <script src="./assets/encryption.js"></script>
+    <script src="./assets/login.js"></script>
+  </head>
+
+  <body>
+    <%key=@eh.getKey%>
+    <input type="hidden" id="key_e" name="key_e" value="<%=key[0]%>">
+    <input type="hidden" id="key_d" name="key_d" value="<%=key[1]%>">
+    <input type="hidden" id="key_n" name="key_n" value="<%=key[2]%>">
+
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-8">
+          <p>Username: </p>
+          <input type="text" id="username"></input>
+          <br>
+          <p>Password: </p>
+          <input type="password" id="password"></input>
+          <br>
+          <button type="button" id="login">Login</button>
+        </div>
+        <div class="col-xs-4">
+          <a href="/register">
+            <button type="button">Create New Account</button>
+          </a>
+          <a href="/forgot">
+            <button type="button">Forgot Password</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

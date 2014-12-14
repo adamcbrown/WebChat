@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="./assets/jquery.cookie.js"></script>
+    <script src="./assets/biginteger.js"></script>
+    <script src="./assets/encryption.js"></script>
+    <script type="text/javascript" src="./assets/chatroom.js"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-8">
+
+          <div id="chatbox">
+
+          </div>
+
+          <div id="input">
+            <input type="text" id="enterText" class="chatEnabled"></input>
+            <button type="button" id="sendText" class="chatEnabled">Send</button>
+          </div>
+          <button type="button" id="chatroomLeave" class="chatEnabled">Leave Chatroom</button>
+
+         </div>
+
+         <div class="col-xs-4">
+          <span>Chatroom Name</span><br>
+          <input type="text" class="lobbyEnabled" id="chatroomName"></input><br><br>
+
+          <span>Password</span><br>
+          <input type="password" class="lobbyEnabled" id="chatroomPassword"></input><br><br>
+
+          <button type="button" id="chatroomEnter" class="lobbyEnabled">Enter Chatroom</button>
+
+          <button type="button" id="createChatroom" class="lobbyEnabled">Create Chatroom</button>
+
+          <br><br>
+
+          <button type="button" id="refreshChatroom" class="lobbyEnabled">Refresh List</button>
+
+         </div>
+      </div>
+    </div>
+
+  </body>
+</html>
