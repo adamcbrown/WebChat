@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
   var socket = new WebSocket("ws://"+window.document.location.host+"/");
   var serverEncryptKey;
 
