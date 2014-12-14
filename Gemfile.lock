@@ -47,6 +47,7 @@ DEPENDENCIES
   json
   pry
   puma
+  rack
   redis
   sinatra (~> 1.4.5)
   thin (~> 1.6.3)
