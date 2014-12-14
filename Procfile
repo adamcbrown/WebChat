@@ -1,1 +1,2 @@
-web: bundle exec puma server.rb -p $PORT
+web: bundle exec ruby server.rb
+web: bundle exec rackup config.ru

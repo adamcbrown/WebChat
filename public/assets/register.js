@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-  var socket = new WebSocket("ws://localhost:8000");
+  var socket = new WebSocket("ws://"+window.document.location.host+":8000");
   var serverEncryptKey;
 
   $("#register").click(function(event){
