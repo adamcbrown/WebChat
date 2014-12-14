@@ -4,11 +4,9 @@ $(document).ready(function(){
   var serverEncryptKey;
 
   $("#login").click(function(event){
-    $.cookie("key_d", $("#key_d").val());
-    $.cookie("username", $("#username").val());
     var data=encryptText(JSON.stringify({"username":$("#username").val(),
                                   "password":$("#password").val(),
-                                  "key":[parseInt($("#key_e").val(), 10), parseInt($("#key_n").val(), 10)]}), serverEncryptKey);
+                                  "key":[$("#key_e").val(), $("#key_n").val()]}), serverEncryptKey);
     socket.send(JSON.stringify({"type":"loginRequest",
                                   "data":data}));
   });
@@ -20,6 +18,10 @@ $(document).ready(function(){
         serverEncryptKey=data.key
         break;
       case "loginAccept":
+        $.cookie("key_d", $("#key_d").val());
+        $.cookie("key_n", $("#key_n").val())
+        $.cookie("username", $("#username").val());
+        $.cookie("password", $("#password").val());
         window.location = "/chatroom";
         break;
       case "loginRefuse":

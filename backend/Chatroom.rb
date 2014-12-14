@@ -10,13 +10,16 @@ class Chatroom
   end
 
   def addUser(user, password)
+    puts @key
     if !@users.include?(user)
       if password!=@password
         user.ws.send(JSON.generate({"type"=>"chatroomRefuse", "message"=>"Invalid Password"}))
       else
         @users<<user
-        user.ws.send(JSON.generate({"type"=>"chatroomAccept", "key"=>[key[0], key[2]]}))
+        user.ws.send(JSON.generate({"type"=>"chatroomAccept", "key"=>[@key[0].to_s, @key[2].to_s]}))
       end
+    else
+      puts "Already Here"
     end
   end
 
@@ -24,18 +27,21 @@ class Chatroom
     @users.delete(user)
   end
 
-  def sendToAll(packet)
-    packet=@eh.cypherText(packet, [key[1], key[2]])
+  def sendToAll(data)
+    data["message"]=@eh.cypherText(data["message"], [@key[1], @key[2]])
     @users.each do |user|
-      sendToUser(user, packet)
+      sendToUser(user, data)
     end
   end
 
-  def sendToUser(user, packet)
-    if eh==nil
-      user.ws.send(packet)
+  def sendToUser(user, data)
+    if @eh==nil
+      user.ws.send(data)
     else
-      user.ws.send(@eh.cypherText(packet.bytes, user.key).join(","))
+      storeMessage=data["message"]
+      data["message"]=@eh.cypherText(data["message"], user.key)
+      user.ws.send(JSON.generate(data))
+      data["message"]=storeMessage
     end
   end
 end

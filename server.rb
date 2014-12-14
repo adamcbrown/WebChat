@@ -14,7 +14,6 @@ def run(opts)
   puts key
 
   serverManager=ServerManager.new
-  serverManager.createChatroom("Testing", "", eh)
 
 
   EM.run do
@@ -49,21 +48,23 @@ def run(opts)
 
         ws.onmessage do |packet|
           data=JSON.parse(packet)
+          puts data
           if data["type"]=="chatroomMessage"
-            serverManager.sendToChatroom(ws, packet)
+            serverManager.sendToChatroom(data["user"], data)
           elsif data["type"]=="chatroomJoin"
             data=JSON.parse(eh.decryptData(data["data"], [key[1], key[2]]))
-            serverManager.addUserToChatroom(ws, data["name"], data["password"])
-          elsif data["type"]=="createChatroom"
+            serverManager.addUserToChatroom(ws, data["user"], data["name"], data["password"])
+          elsif data["type"]=="chatroomCreate"
             data=JSON.parse(eh.decryptData(data["data"], [key[1], key[2]]))
             serverManager.createChatroom(data["name"], data["password"], eh)
           elsif data["type"]=="chatroomLeave"
-            serverManager.leaveChatroom(ws)
+            data=JSON.parse(eh.decryptData(data["data"], [key[1], key[2]]))
+            serverManager.leaveChatroom(data["username"])
           elsif data["type"]=="loginRequest"
             data=JSON.parse(eh.decryptData(data["data"], [key[1], key[2]]))
 
             if serverManager.validLogin(data["username"], data["password"])
-              serverManager.addUser(ws, data["username"], data["key"])
+              serverManager.addUser(ws, data["username"], [data["key"][0].to_i, data["key"][1].to_i])
               ws.send(JSON.generate({"type"=>"loginAccept"}))
             else
               ws.send(JSON.generate({"type"=>"loginRefuse", "message"=>"Invalid Username or Password"}))
@@ -73,9 +74,29 @@ def run(opts)
             if serverManager.userExists(data["username"])
                ws.send(JSON.generate({"type"=>"registerFailed", "message"=>"Username already exists"}))
             else
-              serverManager.registerUser(data["username"], data["password"])
+              serverManager.registerUser(data["username"], data["password"], data["email"])
               ws.send(JSON.generate({"type"=>"loginAccept"}))
-            end 
+            end
+          elsif data["type"]=="loginCheck"
+            data=JSON.parse(eh.decryptData(data["data"], [key[1], key[2]]))
+            if serverManager.validLogin(data["username"], data["password"]) && serverManager.userOnline(data["username"])
+              serverManager.resetWS(data["username"], ws)
+            else
+              ws.send(JSON.generate("type"=>"loginCheckFailed"))
+            end
+          elsif data["type"]=="logOff"
+            data=JSON.parse(eh.decryptData(data["data"], [key[1], key[2]]))
+            serverManager.userLogOff(data["username"])
+          elsif data["type"]=="requestChatroom"
+            data=JSON.parse(eh.decryptData(data["data"], [key[1], key[2]]))
+            user=serverManager.getUserFromName(data["user"])
+            if user!=nil
+              data=eh.cypherText(JSON.generate("chatrooms"=>serverManager.getChatrooms).bytes, user.key);
+              user.ws.send(JSON.generate({
+                  "type"=>"chatroomList",
+                  "chatrooms"=>data
+                }))
+            end
           else
             puts "UNRECOGNIZED TYPE: #{data["type"]}"
           end

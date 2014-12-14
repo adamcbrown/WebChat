@@ -4,8 +4,13 @@ $(document).ready(function(){
   var serverEncryptKey;
 
   $("#register").click(function(event){
+    if($("#username").val()==""||$("#password").val()==""||$("#email").val()==""){
+      alert("Please fill in all values")
+      return;
+    }
     var data=encryptText(JSON.stringify({"username":$("#username").val(),
-                                        "password":$("#password").val()}), serverEncryptKey);
+                                        "password":$("#password").val(),
+                                        "email":$("#email").val()}), serverEncryptKey);
     socket.send(JSON.stringify({"type":"registerUser", "data":data}));
   });
 

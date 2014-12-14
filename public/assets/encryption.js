@@ -79,17 +79,17 @@ var fastmodexp=function(A,B,C){
 function bytesToString(bytes) {
   var str="";
   for(var i=0;i<bytes.length;i++){
-    str+=String.fromCharCode(bytes[i]);
+    var byteStore=bytes[i];
+    if(typeof byteStore == "string")
+      byteStore=parseInt(byteStore);
+    str+=String.fromCharCode(byteStore);
   }
   return str;
 }
 
 function stringToBytes(str){
-  bytes=[];
+  var bytes=[];
   for(var i=0;i<str.length;i++){
-    if(typeof i == "string")
-      i=parseInt(i, 10);
-    
     bytes[i]=str.charCodeAt(i);
   }
   return bytes;
