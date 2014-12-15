@@ -1,6 +1,5 @@
 require 'faye/websocket'
 require 'redis'
-require 'thin'
 require 'JSON'
 require 'sinatra/base'
 require 'pry'
