@@ -6,6 +6,7 @@ class EncryptionHelper
     running_dir = File.dirname(__FILE__)
     running_dir = Dir.pwd if (running_dir == '.')
     @primes=File.open("./backend/Primes.txt").read.split(",")
+    @primes=@primes.sample(@primes.size/4)
   end
 
   def generate
