@@ -1,6 +1,6 @@
 require 'faye/websocket'
 require 'redis'
-require 'JSON'
+require 'json'
 require 'sinatra/base'
 require 'pry'
 require_relative './application_controller.rb'
