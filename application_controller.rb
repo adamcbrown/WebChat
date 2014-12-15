@@ -1,6 +1,5 @@
 require 'json'
 require 'pry'
-require 'thin'
 require 'sinatra/base'
 require_relative "backend/EncryptionHelper.rb"
 
