@@ -1,13 +1,11 @@
-require 'openssl'
+require 'open-uri'
 
 class EncryptionHelper
 
   def initialize
     running_dir = File.dirname(__FILE__)
     running_dir = Dir.pwd if (running_dir == '.')
-    @primes=File.open("./backend/Primes.txt").read.split(",")
-    @primes=@primes.sample(@primes.size/1000)
-    puts @primes.size
+    @primes=open("https://dl.dropboxusercontent.com/u/98223383/Primes.txt"){|f| f.read}.split(",")
   end
 
   def generate
